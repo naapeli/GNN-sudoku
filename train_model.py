@@ -46,9 +46,9 @@ def test_step(graphs, labels):
     return tf.math.count_nonzero(correct), len(correct)
 
 
-chunksize = 1000  # 1_000_000
+chunksize = 1_000_000
 
-epochs = 2
+epochs = 3
 for epoch in range(epochs):
     print(f"Epoch {epoch + 1} / {epochs}")
 
@@ -75,4 +75,4 @@ for epoch in range(epochs):
         print(f"        Train Loss: {train_loss_metric.result():.4f}")
         print(f"        Test Acc: {100 * tf.cast(total_correct, tf.int32) / total_samples:.10f}%")
 
-model.save("models/trained_sudoku_model.keras")
+    model.save(f"models/model_epoch_{epoch}.keras")
