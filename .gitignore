@@ -1,2 +1,4 @@
-sudoku/
+__pycache__/
 venv/
+sudoku9000000.csv
+sudoku10000.csv
