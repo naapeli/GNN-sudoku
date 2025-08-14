@@ -10,9 +10,9 @@ from model import RecurrentRelationalNetwork
 from dataset import get_dataset
 
 
-hidden_dim = 16  # n_node_features
-message_dim = 16  # n_edge_features
-num_steps = 8  # n_iters
+hidden_dim = 32  # n_node_features
+message_dim = 32  # n_edge_features
+num_steps = 12  # n_iters
 n_nodes = 81
 
 model = RecurrentRelationalNetwork(message_dim, hidden_dim, num_steps)
@@ -45,8 +45,10 @@ def test_step(graphs, labels):
     correct = tf.math.count_nonzero(tf.cast(logits, tf.int32) == labels, axis=-1) == n_nodes
     return tf.math.count_nonzero(correct), len(correct)
 
+with open("log.txt", "w") as f:
+    pass
 
-chunksize = 1_000_000
+chunksize = 10_000
 
 epochs = 3
 for epoch in range(epochs):
@@ -75,4 +77,9 @@ for epoch in range(epochs):
         print(f"        Train Loss: {train_loss_metric.result():.4f}")
         print(f"        Test Acc: {100 * tf.cast(total_correct, tf.int32) / total_samples:.10f}%")
 
-    model.save(f"models/model_epoch_{epoch}.keras")
+        with open("log.txt", "a") as f:
+            f.write(f"Epoch: {epoch + 1} - Chunk: {i + 1} - Train loss: {train_loss_metric.result()} - Test Acc: {100 * tf.cast(total_correct, tf.int32) / total_samples:.10f}%\n")
+
+        if (i + 1) % 20 == 0: model.save_weights(f"models/model_epoch_{epoch}_chunk_{i + 1}.keras")
+
+model.save_weights(f"models/model_weights_end.keras")

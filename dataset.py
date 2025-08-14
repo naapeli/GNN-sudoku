@@ -72,7 +72,7 @@ def sudoku_to_graph_tensor(puzzle, solution, hidden_dim):
     return graph, labels
 
 
-def get_dataset(df_chunk, hidden_dim):
+def get_dataset(df_chunk, hidden_dim, batch_size=256):
     puzzle_array = df_chunk["puzzle"].apply(lambda x: list(map(int, x))).to_list()
     puzzle_array = np.array(puzzle_array, dtype=np.int32)
     puzzle_array = puzzle_array.reshape(len(df_chunk), 9, 9)
@@ -83,7 +83,6 @@ def get_dataset(df_chunk, hidden_dim):
     solution_array = tf.convert_to_tensor(solution_array)
 
     n = int(0.7 * len(puzzle_array))
-    batch_size = 32
     trainset = tf.data.Dataset.from_tensor_slices((puzzle_array[:n], solution_array[:n]))
     trainset = trainset.map(partial(sudoku_to_graph_tensor, hidden_dim=hidden_dim))
     trainset = trainset.batch(batch_size)
